@@ -9,19 +9,23 @@ import {
 import { useContext, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { server } from "../../server";
 
 export default function Share() {
-  const { user } = useContext(AuthContext);
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const desc = useRef();
   const [file, setFile] = useState(null);
+  const [desc, setDesc] = useState("");
+
+  const { user } = useSelector((state) => state.user);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     const newPost = {
       userId: user._id,
-      desc: desc.current.value,
+      desc: desc,
     };
+    console.log(newPost);
     if (file) {
       const data = new FormData();
       const fileName = Date.now() + file.name;
@@ -30,11 +34,11 @@ export default function Share() {
       newPost.img = fileName;
       console.log(newPost);
       try {
-        await axios.post("/upload", data);
+        await axios.post(`${server}/upload`, data);
       } catch (err) {}
     }
     try {
-      await axios.post("/posts", newPost);
+      await axios.post(`${server}/posts`, newPost);
       window.location.reload();
     } catch (err) {}
   };
@@ -47,7 +51,7 @@ export default function Share() {
             className="shareProfileImg"
             src={
               user.profilePicture
-                ? PF + user.profilePicture
+                ? user.profilePicture
                 : PF + "person/noAvatar.png"
             }
             alt=""
@@ -55,7 +59,7 @@ export default function Share() {
           <input
             placeholder={"What's in your mind " + user.username + "?"}
             className="shareInput"
-            ref={desc}
+            onChange={(e) => setDesc(e.target.value)}
           />
         </div>
         <hr className="shareHr" />
@@ -65,7 +69,7 @@ export default function Share() {
             <Cancel className="shareCancelImg" onClick={() => setFile(null)} />
           </div>
         )}
-        <form className="shareBottom" onSubmit={submitHandler}>
+        <form className="shareBottom">
           <div className="shareOptions">
             <label htmlFor="file" className="shareOption">
               <PermMedia htmlColor="tomato" className="shareIcon" />
@@ -91,7 +95,11 @@ export default function Share() {
               <span className="shareOptionText">Feelings</span>
             </div>
           </div>
-          <button className="shareButton" type="submit">
+          <button
+            className="shareButton bg-green-500"
+            type="submit"
+            onClick={submitHandler}
+          >
             Share
           </button>
         </form>

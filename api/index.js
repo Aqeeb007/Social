@@ -13,12 +13,14 @@ const messageRoute = require("./routes/messages");
 const router = express.Router();
 const path = require("path");
 const cors = require("cors");
+const cookie = require("cookie-parser");
+
 
 const corsOptions = {
   origin: ['http://localhost:3000'],
   credentials: true,            //access-control-allow-credentials:true
 }
-
+app.use(cookie())
 app.use(cors(corsOptions))
 
 dotenv.config();
@@ -56,7 +58,7 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 });
 
 app.use("/api/auth", authRoute);
-app.use("/api/users", userRoute);
+app.use("/api/user", userRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);

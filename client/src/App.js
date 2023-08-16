@@ -8,21 +8,49 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "./context/AuthContext";
 import Messenger from "./pages/messenger/Messenger";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Store from "./redux/store";
+import { loadUser, getAllUsers } from "./redux/actions/user";
+import { getAllPosts } from "./redux/actions/post";
+
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
-  const { user } = useContext(AuthContext);
+  useEffect(() => {
+    Store.dispatch(loadUser());
+    Store.dispatch(getAllUsers());
+    Store.dispatch(getAllPosts());
+
+  }, []);
+
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={user ? <Home /> : <Register />} />
-        <Route path="/login" element={user ? <Home /> : <Login />} />
-        <Route path="/register" element={user ? { component: () => <Navigate to="/404" /> } : <Register />} />
-        <Route path="/messenger" element={!user ? { component: () => <Navigate to="/404" /> } : <Messenger />} />
+        <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/messenger" element={<Messenger />} />
         <Route path="/profile/:username" element=<Profile /> />
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      {/* Same as */}
+      <ToastContainer />
     </Router >
   );
 }

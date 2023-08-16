@@ -1,3 +1,4 @@
+const { isAuthenticated } = require("../middleware/middleware");
 const User = require("../models/User");
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
@@ -41,16 +42,29 @@ router.delete("/:id", async (req, res) => {
 });
 
 //get a user
-router.get("/", async (req, res) => {
-  const userId = req.query.userId;
-  const username = req.query.username;
+router.get("/getuser", isAuthenticated, async (req, res) => {
   try {
-    const user = userId
-      ? await User.findById(userId)
-      : await User.findOne({ username: username });
-    const { password, updatedAt, ...other } = user._doc;
-    res.status(200).json(other);
+
+    const user = await User.findById(req.user.id)
+
+    // const { password, updatedAt, ...other } = user._doc;
+    res.status(200).json(user);
   } catch (err) {
+    console.log(err)
+    res.status(500).json(err);
+  }
+});
+
+//get all user
+router.get("/getAlluser", isAuthenticated, async (req, res) => {
+  try {
+
+    const users = await User.find()
+
+    // const { password, updatedAt, ...other } = user._doc;
+    res.status(200).json(users);
+  } catch (err) {
+    console.log(err)
     res.status(500).json(err);
   }
 });
