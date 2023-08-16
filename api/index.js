@@ -21,7 +21,7 @@ const corsOptions = {
   credentials: true,            //access-control-allow-credentials:true
 }
 app.use(cookie())
-app.use(cors(corsOptions))
+app.use(cors())
 
 dotenv.config();
 
