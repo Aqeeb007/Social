@@ -17,7 +17,7 @@ const cookie = require("cookie-parser");
 
 
 const corsOptions = {
-  origin: ['http://localhost:3000'],
+  origin: ['https://64dcc9225339c4095423c39e--fastidious-tarsier-fd54f8.netlify.app'],
   credentials: true,            //access-control-allow-credentials:true
 }
 app.use(cookie())
